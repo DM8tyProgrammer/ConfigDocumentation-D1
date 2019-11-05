@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "mighty/db",
+  "title": "Database Configuration",
+  "description": "Applicable database properties",
+  "type": "object",
+  "properties": {
+    "db": {
+      "type": "object",
+      "description": "DB configuration",
+      "properties": {
+        "hostname": {
+          "type": "string",
+          "description": "Hostname of db"
+        },
+        "port": {
+          "type": "integer",
+          "default": 0,
+          "description": "port of db"
+        },
+        "username": {
+          "type": "string",
+          "description": "DB user"
+        },
+        "password": {
+          "type": "string",
+          "description": "DB Password"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of db",
+          "enum": [
+            "oracle",
+            "mysql"
+          ],
+          "default": "mysql"
+        }
+      },
+      "required": [
+        "hostname",
+        "port",
+        "type"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mysql"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "additional-properties": {
+                "$comment": "MySQL properties",
+                "properties": {
+                  "dumpQueriesOnException": {
+                    "type": "boolean"
+                  },
+                  "callableStmtCacheSize": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "oracle"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "additionalProperties": {
+                "properties": {
+                  "batchPerformanceWorkaround": {
+                    "type": "boolean"
+                  },
+                  "connectionRetryDelay": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "dependencies": {
+              "additionalProperties": {
+                "properties": {
+                  "type": {
+                    "const": "oracle"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
